@@ -2,6 +2,7 @@
 title: 'Семинар 6. Красотища'
 date: 'Июнь, 18, 2018'
 output:
+  word_document:
   html_document:
     keep_md: no
     number_sections: yes
@@ -66,18 +67,20 @@ pulse_fct <- pulse %>%
 ```{r}
 model_r <- lm(data = pulse_fct, Pulse2 ~ Pulse1)
 model_ur <- lm(data = pulse_fct, Pulse2 ~ Weight + Pulse1 + Ran + Smokes)
+summary(model_ur)
 ```
 
 Способ с переоцениванием модели:
 ```{r}
 model_r_rob <- lm_robust(data = pulse_fct, Pulse2 ~ Pulse1)
-model_ur_rob <- lm_robust(data = pulse_fct, Pulse2 ~ Weight + Pulse1 + Ran + Smokes)
+model_ur_rob <- lm_robust(data = pulse_fct, Pulse2 ~ Weight + Pulse1 + Ran + Smokes, se_type = "HC2")
+summary(model_ur_rob)
 ```
 
 Проверка гипотез и доверительные интервалы с робастно оценёнными моделями:
 ```{r}
 coeftest(model_ur_rob)
-coefci(model_ur_rob)
+coefci(model_ur_rob, level = 0.9)
 ```
 
 Сравнение двух робастно оценённых моделей:
@@ -119,6 +122,10 @@ waldtest(model_r, model_ur, vcov = vcovHC)
 # waldtest(___, ___, vcov =  vcovHC)
 ```
 
+Тест на гетероскедастичность Бреуша Пагана
+```{r}
+bptest(Pulse2 ~ Pulse1+Smokes, varformula = ~Smokes, data = pulse_fct)
+```
 
 
 # Инструментальные переменные
@@ -305,6 +312,8 @@ ggplot(data = pulse_fct, aes(x = Pulse1, y = Pulse2)) +
 
 Для примера процитируем несколько источников,
 @afanasyev92, @cobb2011teaching, @microsoftProject2008, @doe:website.
+@einstein1916foundation
+
 
 Другие стилевые заготовки для оформления цитат можно скачать в архиве [zotero](https://www.zotero.org/styles).
 
